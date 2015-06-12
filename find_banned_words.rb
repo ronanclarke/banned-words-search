@@ -1,6 +1,12 @@
 require 'tiny_tds'
-
-
+# 0 - 710 - still running
+# 710 - 999 - done
+# 1000 - 1710 - still running
+# 1710 - 1999 - done
+# 2000 - 2709 - done
+# 2710 - 3366 - done
+# 3000 - 3999 - done
+# 4000 - 4131 finished
 class GetBanned
 
 
@@ -9,10 +15,10 @@ class GetBanned
 
     puts banned.size
 
-    @batch_counter = 3000
+    @batch_counter = 1600
     @total = 0
     @start_time = Time.now
-    while @batch_counter < 4000
+    while @batch_counter < 1710
 
       do_batch
 
