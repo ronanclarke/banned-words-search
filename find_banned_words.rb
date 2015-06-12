@@ -1,102 +1,210 @@
 require 'tiny_tds'
-# 0 - 710 - still running
-# 710 - 999 - done
-# 1000 - 1710 - still running
-# 1710 - 1999 - done
-# 2000 - 2709 - done
-# 2710 - 3366 - done
-# 3000 - 3999 - done
-# 4000 - 4131 finished
+
 class GetBanned
 
 
   def init
-    banned = get_banned_keywords
 
-    puts banned.size
+    # columns under test
+    @clinic_cols = ["name", "shortdescription", "longdescription"]
+    @treatment_cols = ["treatment", "details"]
 
-    @batch_counter = 1600
+    @staff_cols = ["BioHTML", "Name", "LastName", "Additional_Notes", "Premises", "Special_Interests"]
+    @feedback_cols = ["Comments"]
+
+    @reviews_cols = ["UserName","TEXT","Title","staffname","YouRecommend","YouReturn","PlaceName","HowTravel","ClinicsResponse","TreatmentName","ReviewLongTreatment","ClinicComment"]
+
+
+    @banned_keywords = get_banned_keywords
+
+
+    puts @banned_keywords.size
+
+    @compiled_regexes = []
+
+    @banned_keywords.each do |keyword|
+      @compiled_regexes << Regexp.new(/\b#{keyword}\b/i)
+    end
+
+
+    @batch_counter = 3
     @total = 0
     @start_time = Time.now
+    @last_id = 0
+
     while @batch_counter < 1710
 
-      do_batch
+      do_batch_of_clinics
 
     end
   end
 
-  def log_bad_clinic(log_text)
-    open('bad_clinics.txt', 'a') do |f|
+  def log_to_file(file_type, log_text)
+    open("results_#{file_type}.log", 'a') do |f|
       f.puts "#{log_text}"
     end
   end
 
 
-  def do_batch
+  def do_batch_of_clinics
 
     batch_size = 50
-
-#
-
-
     counter = 0
     start_time = Time.now
+
     client = TinyTds::Client.new username: 'local', password: 'local', host: 'staging.windows.whatclinic.net', database: "wcc"
-     result = client.execute("SELECT ID,name,shortdescription,longdescription from clinics where id > #{@batch_counter * batch_size} and id <= #{(@batch_counter+1) * batch_size}")
+
+    cols = @clinic_cols
 
 
-    if(result.count < 1)
-      @batch_counter = @batch_counter + 1
-      return
-    end
-    @total = @total + result.count
+    clinics_sql = "SELECT top 100 c.id as clinicId,c.ID as ID,c.supplierId as supplierId,#{cols.join(',')}
+                    from Clinics c join Suppliers s on c.supplierid = s.id where c.id > #{@last_id} and s.status != 0  order by c.id "
+    result = client.execute(clinics_sql)
 
-    cols = ["name","shortdescription","longdescription"]
-
+    # process each clinic
     result.each do |row|
-
-
-      test_row(row, cols  )
-      # test_field(row["ID"],"name", row["name"])
-      # test_field(row["ID"],"shortdescription", row["shortdescription"])
-      # test_field(row["ID"],"longdescription", row["longdescription"])
-
-
+      test_clinic_row(row, cols)
+      @last_id = row["ID"]
     end
-    diff = Time.now - @start_time
-    puts "batch #{@batch_counter} - total processed = #{@total} : #{diff }"
+
+    if (result.count < 2)
+      puts "result was less than 2"
+      @batch_counter = 1000000000
+    end
+
+
+    client.close
+
+    # just stats here
+    @total = @total + result.count
+    now = Time.now
+    if (!@last_time)
+      @last_time = Time.now
+    end
+    puts "batch #{@batch_counter} - total processed = #{@total} : #{now - @start_time} : lap = #{now-@last_time}"
+    @last_time = Time.now
 
     @batch_counter = @batch_counter + 1
-    client.close
+
 
   end
 
-  def test_row(row,cols)
 
+  #
+  # do this once per clinic
+  #
+  def test_clinic_row(row, cols)
+    is_bad_clinic = false
     str = ""
     cols.each do |col|
       str = str + " #{row[col]}"
     end
-    str = "#{row["name"]} #{row["shortdescription"]} #{row["longdescription"]}"
-    if(is_hit?(str))
-      puts "got hit"
-      cols.each do |col|
-        test_field(row["ID"],col, row[col])
 
+    # check the clinic table itself
+    if (is_hit?(str))
+      cols.each do |col|
+        if (test_field(row, "clinics,#{col}", row[col]))
+          is_bad_clinic = true
+        end
+      end
+    end
+
+    # check treatments
+    is_bad_clinic = true if check_treatments_for_clinic(row["ID"])
+
+    # check staff
+    is_bad_clinic = true if check_staff_for_clinic(row["ID"])
+
+    # check feedback
+    is_bad_clinic = true if check_feedback_for_clinic(row["ID"])
+
+    # reviews
+    is_bad_clinic = true if check_reviews_for_clinic(row["ID"])
+
+    log_to_file("clean", row["ID"]) unless is_bad_clinic
+
+
+  end
+
+  # table specific logic to build queries
+
+  def check_staff_for_clinic(clinic_id)
+    str_sql = " select cs.clinicId as clinicId,s.id as ID,#{@staff_cols.join(",") } from Staffs s join clinics_staff cs on cs.StaffID = s.id where s.Status = 1 and cs.ClinicID = #{clinic_id}"
+    return check_rows_for_clinic("Staffs",str_sql,@staff_cols)
+  end
+
+  def check_treatments_for_clinic(clinic_id)
+
+    str_sql = "select cpp.clinicid as clinicId ,cpp.id as ID , coalesce(cpp.treatment, '') as treatment, coalesce(cpp.details, '') as details
+                from
+                Clinic_ProcedurePricing cpp
+                join Procedures p on p.id = cpp.procid
+                where
+                cpp.clinicid = #{clinic_id} and cpp.status = 1 and p.status = 0
+                and not (coalesce(cpp.treatment, p.name) = p.name and len(coalesce(cpp.details, '')) = 0) "
+
+    return check_rows_for_clinic("Clinic_ProcedurePricing",str_sql,@treatment_cols)
+  end
+
+  def check_feedback_for_clinic(clinic_id)
+    str_sql = "select ce.ClinicId as clinicId,lf.id as ID, #{@feedback_cols.join(",")} from LeadFeedBack lf join Clinics_Enquiries ce on ce.id = lf.Clinics_EnquiryID where ce.ClinicID = #{clinic_id} and LEN(coalesce(lf.comments,''))>0"
+    return check_rows_for_clinic("leadfeedback",str_sql,@feedback_cols)
+  end
+
+  def check_reviews_for_clinic(clinic_id)
+    str_sql = "select clinicid as clinicId, id as ID,#{@reviews_cols.join(",")} from Reviews where clinicId = #{clinic_id}"
+    return check_rows_for_clinic("reviews",str_sql,@reviews_cols)
+  end
+
+
+  # generic processing for query and individual rows
+  def check_rows_for_clinic(table,str_sql,cols)
+    ret = false
+    client = TinyTds::Client.new username: 'local', password: 'local', host: 'staging.windows.whatclinic.net', database: "wcc"
+    result = client.execute(str_sql)
+
+    str = ""
+
+    result.each do |row|
+      cols.each do |col|
+        str = str + " #{row[col]}"
+      end
+    end
+
+    if is_hit?(str)
+      ret = true
+      # now check each one for a hit
+      result.each do |row|
+        check_single_row(table,row, cols)
       end
 
     end
 
+    client.close
+
+    return ret
+
+  end
+
+  def check_single_row(table,row,cols)
+    ret = false
+    cols.each do |col|
+      ret = test_field(row, "#{table},#{col}", row[col])
+    end
+
+    return ret
   end
 
 
+  # actually do the regex operations
   def is_hit?(str)
     ret = false
-    get_banned_keywords.each do |banned|
-      r = Regexp.new(/\b#{banned}\b/i)
+
+    @compiled_regexes.each do |r|
+
       res = r.match(str)
 
-      if res
+      if res # break and return early on first hit
         ret = true
         break
       end
@@ -104,31 +212,33 @@ class GetBanned
     return ret
 
   end
-  def test_field(clinic_id,field, val)
 
-    #puts "#{field} #{val}"
-
-    get_banned_keywords.each do |banned|
-      r = Regexp.new(/\b#{banned}\b/i)
+  def test_field(row, field, val)
+    ret = false
+    @compiled_regexes.each do |r|
 
       res = r.match(val)
       if res
-        str = "clinic_id #{clinic_id} got match #{res[0]} === > #{field}"
-        puts str
-        log_bad_clinic(str)
 
-      else
+        str = "clinicId: #{row["clinicId"]}  id #{row["ID"]} field #{field} match for ==>  #{res[0]}"
+        log_str = "#{row["clinicId"]},#{row["ID"]},#{field},#{res[0]}"
+        puts str
+        ret = true
+        log_to_file('bad_clinics', log_str)
 
       end
     end
-
+    return ret
   end
 
+
+  #
+  # just got keywords from here on down
+  #
 
   def get_banned_keywords
 
     return [
-
         '8-mop',
         'a-hydrocort',
         'a-methapred',
