@@ -1,0 +1,14 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ruby-ole (1.2.11.8)
+    spreadsheet (1.0.3)
+      ruby-ole (>= 1.0)
+    tiny_tds (0.6.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  spreadsheet
+  tiny_tds
