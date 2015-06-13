@@ -5,7 +5,12 @@ class GetBanned
 
 
   def init
-    process_count = 5
+    process_count = 4
+
+    @host = "enreport.db.whatclinic.com"
+    @db = "enreport"
+    @username = "enreport"
+    @password = "enreport"
 
     @run_time_stamp = Time.now.strftime("%m-%d_%H-%M-%S")
     # columns under test
@@ -32,7 +37,7 @@ class GetBanned
 
 
 
-    client = TinyTds::Client.new username: 'local', password: 'local', host: 'staging.windows.whatclinic.net', database: "wcc"
+    client = TinyTds::Client.new username: @username, password: @password, host: @host, database: @db
     result = client.execute("select max(id) as maxid from clinics")
     max_id = result.first["maxid"]
 
@@ -53,12 +58,11 @@ class GetBanned
     process_count.times do | i |
 
       arr_pids<< Process.fork do
-        do_batch_of_clinics(ranges[i], ranges[i+1])
+        do_batch_of_clinics(i,ranges[i], ranges[i+1])
       end
 
     end
 
-    log_to_file("init","done",false)
     Process.wait
 
 
@@ -84,8 +88,9 @@ class GetBanned
   end
 
 
-  def do_batch_of_clinics(range_start=0, range_end=1000000000)
+  def do_batch_of_clinics(i,range_start=0, range_end=1000000000)
 
+    @process_index = i
     str =  "process #{Process.pid} starting on range #{range_start} - #{range_end}"
     puts str
     log_to_file("init",str,false)
@@ -98,12 +103,12 @@ class GetBanned
     # keep looping till we do out entire section
     while (last_id < range_end) do
       @batch_results = []
-      batch_size = 10
+      batch_size = 50
       counter = 0
       start_time = Time.now
 
-      client = TinyTds::Client.new username: 'local', password: 'local', host: 'staging.windows.whatclinic.net', database: "wcc"
 
+      client = TinyTds::Client.new username: @username, password: @password, host: @host, database: @db
       cols = @clinic_cols
 
 
@@ -117,12 +122,6 @@ class GetBanned
         last_id = row["ID"]
       end
 
-      if (result.count < 2)
-        puts "result was less than 2"
-        @batch_counter = 1000000000
-      end
-
-
       client.close
 
       # just stats here
@@ -131,7 +130,7 @@ class GetBanned
       if (!@last_time)
         @last_time = Time.now
       end
-      puts "PID:#{Process.pid} batch #{@batch_counter} - total processed = #{@total} : #{now - @start_time} : lap = #{now-@last_time}"
+      puts "#{@process_index} PID:#{Process.pid} batch #{@batch_counter} - total processed = #{@total} : #{now - @start_time} : lap = #{now-@last_time}"
       @last_time = Time.now
 
       @batch_counter = @batch_counter + 1
@@ -215,7 +214,8 @@ class GetBanned
   # generic processing for query and individual rows
   def check_rows_for_clinic(table, str_sql, cols)
     ret = false
-    client = TinyTds::Client.new username: 'local', password: 'local', host: 'staging.windows.whatclinic.net', database: "wcc"
+
+    client = TinyTds::Client.new username: @username, password: @password, host: @host, database: @db
     result = client.execute(str_sql)
 
     str = ""
