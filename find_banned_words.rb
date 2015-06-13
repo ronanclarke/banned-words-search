@@ -1,92 +1,146 @@
 require 'tiny_tds'
+require 'fileutils'
 
 class GetBanned
 
 
   def init
+    process_count = 5
 
+    @run_time_stamp = Time.now.strftime("%m-%d_%H-%M-%S")
     # columns under test
     @clinic_cols = ["name", "shortdescription", "longdescription"]
     @treatment_cols = ["treatment", "details"]
-
     @staff_cols = ["BioHTML", "Name", "LastName", "Additional_Notes", "Premises", "Special_Interests"]
     @feedback_cols = ["Comments"]
-
-    @reviews_cols = ["UserName","TEXT","Title","staffname","YouRecommend","YouReturn","PlaceName","HowTravel","ClinicsResponse","TreatmentName","ReviewLongTreatment","ClinicComment"]
-
+    @reviews_cols = ["UserName", "TEXT", "Title", "staffname", "YouRecommend", "YouReturn", "PlaceName", "HowTravel", "ClinicsResponse", "TreatmentName", "ReviewLongTreatment", "ClinicComment"]
 
     @banned_keywords = get_banned_keywords
 
 
-    puts @banned_keywords.size
+    FileUtils::mkdir_p "logs/#{@run_time_stamp}" # make a dir to hold our logs
 
     @compiled_regexes = []
 
-    @banned_keywords.each do |keyword|
-      @compiled_regexes << Regexp.new(/\b#{keyword}\b/i)
-    end
+
 
 
     @batch_counter = 3
     @total = 0
     @start_time = Time.now
-    @last_id = 0
-
-    while @batch_counter < 1710
-
-      do_batch_of_clinics
-
-    end
-  end
-
-  def log_to_file(file_type, log_text)
-    open("results_#{file_type}.log", 'a') do |f|
-      f.puts "#{log_text}"
-    end
-  end
 
 
-  def do_batch_of_clinics
 
-    batch_size = 50
-    counter = 0
-    start_time = Time.now
 
     client = TinyTds::Client.new username: 'local', password: 'local', host: 'staging.windows.whatclinic.net', database: "wcc"
-
-    cols = @clinic_cols
-
-
-    clinics_sql = "SELECT top 100 c.id as clinicId,c.ID as ID,c.supplierId as supplierId,#{cols.join(',')}
-                    from Clinics c join Suppliers s on c.supplierid = s.id where c.id > #{@last_id} and s.status != 0  order by c.id "
-    result = client.execute(clinics_sql)
-
-    # process each clinic
-    result.each do |row|
-      test_clinic_row(row, cols)
-      @last_id = row["ID"]
-    end
-
-    if (result.count < 2)
-      puts "result was less than 2"
-      @batch_counter = 1000000000
-    end
-
+    result = client.execute("select max(id) as maxid from clinics")
+    max_id = result.first["maxid"]
 
     client.close
 
-    # just stats here
-    @total = @total + result.count
-    now = Time.now
-    if (!@last_time)
-      @last_time = Time.now
+    range_size = (max_id / process_count-1).to_i
+    ranges = [0]
+    val_to_insert = range_size
+    while(val_to_insert < max_id)
+      ranges << val_to_insert
+      val_to_insert += range_size
     end
-    puts "batch #{@batch_counter} - total processed = #{@total} : #{now - @start_time} : lap = #{now-@last_time}"
-    @last_time = Time.now
+    ranges[ranges.size-1] = max_id
 
-    @batch_counter = @batch_counter + 1
+    arr_pids = []
+
+    log_to_file("init","starting #{process_count} processes",false)
+    process_count.times do | i |
+
+      arr_pids<< Process.fork do
+        do_batch_of_clinics(ranges[i], ranges[i+1])
+      end
+
+    end
+
+    log_to_file("init","done",false)
+    Process.wait
 
 
+
+    # do_batch_of_clinics(0,2000)
+
+
+  end
+
+  def log_to_file(file_type, log_text,with_process=true)
+
+    if(with_process)
+      file_name = "logs/#{@run_time_stamp}/results_#{file_type}_#{Process.pid}.log"
+    else
+      file_name = "logs/#{@run_time_stamp}/results_#{file_type}.log"
+    end
+
+    open(file_name, 'a') do |f|
+      f.puts "#{log_text}"
+    end
+
+
+  end
+
+
+  def do_batch_of_clinics(range_start=0, range_end=1000000000)
+
+    str =  "process #{Process.pid} starting on range #{range_start} - #{range_end}"
+    puts str
+    log_to_file("init",str,false)
+    @banned_keywords.each do |keyword|
+      @compiled_regexes << Regexp.new(/\b#{keyword}\b/i)
+    end
+
+    last_id = range_start
+
+    # keep looping till we do out entire section
+    while (last_id < range_end) do
+      @batch_results = []
+      batch_size = 10
+      counter = 0
+      start_time = Time.now
+
+      client = TinyTds::Client.new username: 'local', password: 'local', host: 'staging.windows.whatclinic.net', database: "wcc"
+
+      cols = @clinic_cols
+
+
+      clinics_sql = "SELECT top #{batch_size} c.id as clinicId,c.ID as ID,c.supplierId as supplierId,#{cols.join(',')}
+                    from Clinics c join Suppliers s on c.supplierid = s.id where c.id > #{last_id} and c.id <= #{range_end} and s.status != 0  order by c.id "
+      result = client.execute(clinics_sql)
+
+      # process each clinic
+      result.each do |row|
+        test_clinic_row(row, cols)
+        last_id = row["ID"]
+      end
+
+      if (result.count < 2)
+        puts "result was less than 2"
+        @batch_counter = 1000000000
+      end
+
+
+      client.close
+
+      # just stats here
+      @total = @total + result.count
+      now = Time.now
+      if (!@last_time)
+        @last_time = Time.now
+      end
+      puts "PID:#{Process.pid} batch #{@batch_counter} - total processed = #{@total} : #{now - @start_time} : lap = #{now-@last_time}"
+      @last_time = Time.now
+
+      @batch_counter = @batch_counter + 1
+
+      @batch_results.each do |result|
+        log_to_file(result[:result].to_s, result[:message])
+        log_to_file("completed",result[:clinic_id])
+      end
+    end
   end
 
 
@@ -121,7 +175,8 @@ class GetBanned
     # reviews
     is_bad_clinic = true if check_reviews_for_clinic(row["ID"])
 
-    log_to_file("clean", row["ID"]) unless is_bad_clinic
+    # log the result
+    @batch_results << {result: :clean, message: row["ID"],clinic_id:row["ID"] } unless is_bad_clinic
 
 
   end
@@ -130,7 +185,7 @@ class GetBanned
 
   def check_staff_for_clinic(clinic_id)
     str_sql = " select cs.clinicId as clinicId,s.id as ID,#{@staff_cols.join(",") } from Staffs s join clinics_staff cs on cs.StaffID = s.id where s.Status = 1 and cs.ClinicID = #{clinic_id}"
-    return check_rows_for_clinic("Staffs",str_sql,@staff_cols)
+    return check_rows_for_clinic("Staffs", str_sql, @staff_cols)
   end
 
   def check_treatments_for_clinic(clinic_id)
@@ -143,22 +198,22 @@ class GetBanned
                 cpp.clinicid = #{clinic_id} and cpp.status = 1 and p.status = 0
                 and not (coalesce(cpp.treatment, p.name) = p.name and len(coalesce(cpp.details, '')) = 0) "
 
-    return check_rows_for_clinic("Clinic_ProcedurePricing",str_sql,@treatment_cols)
+    return check_rows_for_clinic("Clinic_ProcedurePricing", str_sql, @treatment_cols)
   end
 
   def check_feedback_for_clinic(clinic_id)
     str_sql = "select ce.ClinicId as clinicId,lf.id as ID, #{@feedback_cols.join(",")} from LeadFeedBack lf join Clinics_Enquiries ce on ce.id = lf.Clinics_EnquiryID where ce.ClinicID = #{clinic_id} and LEN(coalesce(lf.comments,''))>0"
-    return check_rows_for_clinic("leadfeedback",str_sql,@feedback_cols)
+    return check_rows_for_clinic("leadfeedback", str_sql, @feedback_cols)
   end
 
   def check_reviews_for_clinic(clinic_id)
     str_sql = "select clinicid as clinicId, id as ID,#{@reviews_cols.join(",")} from Reviews where clinicId = #{clinic_id}"
-    return check_rows_for_clinic("reviews",str_sql,@reviews_cols)
+    return check_rows_for_clinic("reviews", str_sql, @reviews_cols)
   end
 
 
   # generic processing for query and individual rows
-  def check_rows_for_clinic(table,str_sql,cols)
+  def check_rows_for_clinic(table, str_sql, cols)
     ret = false
     client = TinyTds::Client.new username: 'local', password: 'local', host: 'staging.windows.whatclinic.net', database: "wcc"
     result = client.execute(str_sql)
@@ -175,7 +230,7 @@ class GetBanned
       ret = true
       # now check each one for a hit
       result.each do |row|
-        check_single_row(table,row, cols)
+        check_single_row(table, row, cols)
       end
 
     end
@@ -186,7 +241,8 @@ class GetBanned
 
   end
 
-  def check_single_row(table,row,cols)
+  def check_single_row(table, row, cols)
+
     ret = false
     cols.each do |col|
       ret = test_field(row, "#{table},#{col}", row[col])
@@ -224,7 +280,8 @@ class GetBanned
         log_str = "#{row["clinicId"]},#{row["ID"]},#{field},#{res[0]}"
         puts str
         ret = true
-        log_to_file('bad_clinics', log_str)
+        @batch_results << {clinic_id: row["clinicId"],result: :bad, message: log_str}
+        # log_to_file('bad_clinics', log_str)
 
       end
     end
