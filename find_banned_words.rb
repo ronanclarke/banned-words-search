@@ -4,13 +4,31 @@ require 'fileutils'
 class GetBanned
 
 
-  def init
-    process_count = 4
+  def init(procces_count=nil, process_index=nil)
+
+    # parse arguments
+
+    unless procces_count and process_index
+      if ARGV.size < 2
+        puts "please enter 2 args ...  processes, index "
+        return
+      else
+        process_count = ARGV[0].to_i
+        process_index = ARGV[1].to_i
+      end
+    end
+
+    puts "starting"
 
     @host = "enreport.db.whatclinic.com"
     @db = "enreport"
     @username = "enreport"
     @password = "enreport"
+    #
+    # @host = "staging.windows.whatclinic.net"
+    # @db = "wcc"
+    # @username = "local"
+    # @password = "local"
 
     @run_time_stamp = Time.now.strftime("%m-%d_%H-%M-%S")
     # columns under test
@@ -23,22 +41,19 @@ class GetBanned
     @banned_keywords = get_banned_keywords
 
 
-    FileUtils::mkdir_p "logs/#{@run_time_stamp}" # make a dir to hold our logs
+    FileUtils::mkdir_p "logs" # make a dir to hold our logs
 
     @compiled_regexes = []
 
-
-
-
-    @batch_counter = 3
+    @batch_counter = 0
     @total = 0
     @start_time = Time.now
 
-
-
-
     client = TinyTds::Client.new username: @username, password: @password, host: @host, database: @db
-    result = client.execute("select max(id) as maxid from clinics")
+    result = client.execute("SELECT  max(row_num) as maxid
+                              FROM (SELECT row_number() OVER ( ORDER BY c.id) AS row_num, c.id
+                                     FROM Clinics c JOIN Suppliers s ON c.supplierid = s.id AND s.status != 0
+                                    ) as sub    ")
     max_id = result.first["maxid"]
 
     client.close
@@ -46,38 +61,36 @@ class GetBanned
     range_size = (max_id / process_count-1).to_i
     ranges = [0]
     val_to_insert = range_size
-    while(val_to_insert < max_id)
+    while (val_to_insert < max_id)
       ranges << val_to_insert
       val_to_insert += range_size
     end
     ranges[ranges.size-1] = max_id
 
-    arr_pids = []
+    puts "starting process #{process_index} of #{process_count}"
 
-    log_to_file("init","starting #{process_count} processes",false)
-    process_count.times do | i |
-
-      arr_pids<< Process.fork do
-        do_batch_of_clinics(i,ranges[i], ranges[i+1])
-      end
-
+    process_count.times do |i|
+      puts "#{i} #{ranges[i]} - #{ranges[i+1]}"
     end
-
-    Process.wait
-
+    @process_index = process_index
 
 
-    # do_batch_of_clinics(0,2000)
+    begin
+      do_batch_of_clinics(process_index, ranges[process_index], ranges[process_index+1])
+    rescue
+      puts "got a blowup restarting ....."
+      init(procces_count,process_index)
+    end
 
 
   end
 
-  def log_to_file(file_type, log_text,with_process=true)
+  def log_to_file(file_type, log_text, with_process=true)
 
-    if(with_process)
-      file_name = "logs/#{@run_time_stamp}/results_#{file_type}_#{Process.pid}.log"
+    if (with_process)
+      file_name = "logs/results_#{file_type}_#{@process_index}.log"
     else
-      file_name = "logs/#{@run_time_stamp}/results_#{file_type}.log"
+      file_name = "logs/results_#{file_type}.log"
     end
 
     open(file_name, 'a') do |f|
@@ -87,22 +100,37 @@ class GetBanned
 
   end
 
+  def check_for_completed_clinics(orig_id)
 
-  def do_batch_of_clinics(i,range_start=0, range_end=1000000000)
+
+    file_name = "logs/results_completed_#{@process_index}.log"
+    return orig_id unless (File.exists? file_name)
+    res = IO.readlines(file_name)[-1]
+
+    puts "should restart from id #{res}"
+    return res.to_i
+
+  end
+
+  def do_batch_of_clinics(i, range_start=0, range_end=1000000000)
 
     @process_index = i
-    str =  "process #{Process.pid} starting on range #{range_start} - #{range_end}"
+    str = "process #{Process.pid} starting on range #{range_start} - #{range_end}"
     puts str
-    log_to_file("init",str,false)
+    log_to_file("init", str, false)
     @banned_keywords.each do |keyword|
       @compiled_regexes << Regexp.new(/\b#{keyword}\b/i)
     end
 
     last_id = range_start
 
+    # check for completed clinics and set last_id to that
+    last_id = check_for_completed_clinics(last_id)
+    puts "lastid is #{last_id}"
+    empty_iterations = 0
     # keep looping till we do out entire section
     while (last_id < range_end) do
-      @batch_results = []
+
       batch_size = 50
       counter = 0
       start_time = Time.now
@@ -112,14 +140,31 @@ class GetBanned
       cols = @clinic_cols
 
 
-      clinics_sql = "SELECT top #{batch_size} c.id as clinicId,c.ID as ID,c.supplierId as supplierId,#{cols.join(',')}
-                    from Clinics c join Suppliers s on c.supplierid = s.id where c.id > #{last_id} and c.id <= #{range_end} and s.status != 0  order by c.id "
+      clinics_sql = "SELECT row_num,ID,supplierId,Id as clinicId,#{cols.join(",")}
+                      FROM (SELECT  row_number() OVER (ORDER BY c.id) AS row_num,
+                      c.id,c.supplierId as supplierId,#{cols.join(",")}
+                      FROM Clinics c JOIN Suppliers s ON c.supplierid = s.id AND s.status != 0
+                      ) as sub
+                      where row_num > #{last_id} and row_num <= #{last_id.to_i + batch_size}"
+
+      # clinics_sql = "SELECT top #{batch_size} c.id as clinicId,c.ID as ID,c.supplierId as supplierId,#{cols.join(',')}
+      #               from Clinics c join Suppliers s on c.supplierid = s.id where c.id > #{last_id} and c.id <= #{range_end} and s.status != 0  order by c.id "
+
       result = client.execute(clinics_sql)
 
+      if result.count < 1
+        last_id = last_id.to_i + batch_size.to_i
+        empty_iterations += 1
+      end
+      if(empty_iterations > 50)
+        puts "too many empty records breaking"
+        last_id = range_end
+      end
       # process each clinic
       result.each do |row|
         test_clinic_row(row, cols)
-        last_id = row["ID"]
+        last_id = row["row_num"].to_i
+        log_to_file("completed", last_id)
       end
 
       client.close
@@ -130,15 +175,12 @@ class GetBanned
       if (!@last_time)
         @last_time = Time.now
       end
-      puts "#{@process_index} PID:#{Process.pid} batch #{@batch_counter} - total processed = #{@total} : #{now - @start_time} : lap = #{now-@last_time}"
+      puts "#{@process_index} last_id #{last_id} (#{range_start}|#{range_end}) remaining #{range_end - last_id}- total processed = #{@total} : #{now - @start_time} : lap = #{now-@last_time}"
       @last_time = Time.now
 
       @batch_counter = @batch_counter + 1
 
-      @batch_results.each do |result|
-        log_to_file(result[:result].to_s, result[:message])
-        log_to_file("completed",result[:clinic_id])
-      end
+
     end
   end
 
@@ -147,6 +189,8 @@ class GetBanned
   # do this once per clinic
   #
   def test_clinic_row(row, cols)
+
+    @batch_results = []
     is_bad_clinic = false
     str = ""
     cols.each do |col|
@@ -175,8 +219,11 @@ class GetBanned
     is_bad_clinic = true if check_reviews_for_clinic(row["ID"])
 
     # log the result
-    @batch_results << {result: :clean, message: row["ID"],clinic_id:row["ID"] } unless is_bad_clinic
+    @batch_results << {result: :clean, message: row["ID"], clinic_id: row["ID"]} unless is_bad_clinic
 
+    @batch_results.each do |result|
+      log_to_file(result[:result].to_s, result[:message])
+    end
 
   end
 
@@ -280,7 +327,7 @@ class GetBanned
         log_str = "#{row["clinicId"]},#{row["ID"]},#{field},#{res[0]}"
         puts str
         ret = true
-        @batch_results << {clinic_id: row["clinicId"],result: :bad, message: log_str}
+        @batch_results << {clinic_id: row["clinicId"], result: :bad, message: log_str}
         # log_to_file('bad_clinics', log_str)
 
       end
