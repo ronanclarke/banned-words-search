@@ -4,21 +4,7 @@ require 'fileutils'
 class GetBanned
 
 
-  def init(procces_count=nil, process_index=nil)
-
-    # parse arguments
-
-    unless procces_count and process_index
-      if ARGV.size < 2
-        puts "please enter 2 args ...  processes, index "
-        return
-      else
-        process_count = ARGV[0].to_i
-        process_index = ARGV[1].to_i
-      end
-    end
-
-
+  def init()
 
     puts "starting"
 
@@ -26,6 +12,11 @@ class GetBanned
     @db = "enreport"
     @username = "enreport"
     @password = "enreport"
+
+    @host = "prod.db.whatclinic.com"
+    @db = "prod"
+    @username = "prod"
+    @password = "prod"
     #
     # @host = "staging.windows.whatclinic.net"
     # @db = "wcc"
@@ -46,45 +37,68 @@ class GetBanned
     FileUtils::mkdir_p "logs" # make a dir to hold our logs
 
     @compiled_regexes = []
-
+    @banned_keywords.each do |keyword|
+      @compiled_regexes << Regexp.new(/\b#{keyword}\b/i)
+    end
     @batch_counter = 0
     @total = 0
     @start_time = Time.now
 
-    client = TinyTds::Client.new username: @username, password: @password, host: @host, database: @db
-    result = client.execute("SELECT  max(row_num) as maxid
-                              FROM (SELECT row_number() OVER ( ORDER BY c.id) AS row_num, c.id
-                                     FROM Clinics c JOIN Suppliers s ON c.supplierid = s.id AND s.status != 0
-                                    ) as sub    ")
-    max_id = result.first["maxid"]
-
-    client.close
-
-    range_size = (max_id / process_count-1).to_i
-    ranges = [0]
-    val_to_insert = range_size
-    while (val_to_insert < max_id)
-      ranges << val_to_insert
-      val_to_insert += range_size
-    end
-    ranges[ranges.size-1] = max_id
+    process_index = 1
+    process_count = 1
 
     puts "starting process #{process_index} of #{process_count}"
+    @process_index = 1
 
-    process_count.times do |i|
-      puts "#{i} #{ranges[i]} - #{ranges[i+1]}"
-    end
-    @process_index = process_index
+    clinics_to_process = get_clinics_to_process
 
 
     begin
-      do_batch_of_clinics(process_index, ranges[process_index], ranges[process_index+1])
-    rescue
+      clinics_to_process.each do |clinic_id|
+        do_clinic_by_id(process_index, clinic_id)
+      end
+    rescue Exception => ex
+      puts ex.message
+      puts ex.backtrace.join("\n")
+      puts
       puts "got a blowup restarting ....."
-      init(procces_count,process_index)
+      init()
     end
 
 
+  end
+
+  def get_clinics_to_process
+    puts "getting list of clinics"
+
+    source_array = read_file_to_array("logs-sun-14th-evening/bad_all.log", true)
+    clinic_ids = []
+    source_array.each do |row|
+      clinic_ids << row.split(",")[0]
+    end
+
+    clinic_ids.uniq!
+
+
+    # remove already completed ones
+    completed_array = []
+    file_name = "logs/results_completed_#{@process_index}.log"
+    puts file_name
+    if (File.exists? file_name)
+      completed_array = read_file_to_array(file_name, true)
+    end
+
+
+    # completed_array.each do |clinic_id|
+    #   puts "removing #{clinic_id.to_s}"
+    #   clinic_ids.delete(clinic_id)
+    # end
+
+    remaining = clinic_ids - completed_array
+
+    puts "#{remaining.size} clinics remaining of #{clinic_ids.size} total"
+
+    return remaining
   end
 
   def log_to_file(file_type, log_text, with_process=true)
@@ -114,9 +128,38 @@ class GetBanned
 
   end
 
+  def do_clinic_by_id(i, clinic_id)
+    @process_index = i
+
+    client = TinyTds::Client.new username: @username, password: @password, host: @host, database: @db
+    cols = @clinic_cols
+
+    clinics_sql = "SELECT row_num,ID,supplierId,Id as clinicId,#{cols.join(",")}
+                      FROM (SELECT  row_number() OVER (ORDER BY c.id) AS row_num,
+                      c.id,c.supplierId as supplierId,#{cols.join(",")}
+                      FROM Clinics c JOIN Suppliers s ON c.supplierid = s.id AND s.status != 0
+                      ) as sub
+                      where ID = #{clinic_id}"
+
+
+    result = client.execute(clinics_sql)
+    row = result.first
+
+    puts "processing clinic id #{clinic_id}"
+    if (row && row["name"])
+      test_clinic_row(row, cols)
+      last_id = row["clinicId"].to_i
+      log_to_file("completed", last_id)
+    else
+      log_to_file("not_found_clinics", clinic_id)
+    end
+
+
+  end
+
   def do_batch_of_clinics(i, range_start=0, range_end=1000000000)
 
-    @process_index = i
+
     str = "process #{Process.pid} starting on range #{range_start} - #{range_end}"
     puts str
     log_to_file("init", str, false)
@@ -158,7 +201,7 @@ class GetBanned
         last_id = last_id.to_i + batch_size.to_i
         empty_iterations += 1
       end
-      if(empty_iterations > 50)
+      if (empty_iterations > 50)
         puts "too many empty records breaking"
         last_id = range_end
       end
@@ -192,15 +235,18 @@ class GetBanned
   #
   def test_clinic_row(row, cols)
 
+
     @batch_results = []
     is_bad_clinic = false
     str = ""
     cols.each do |col|
+
       str = str + " #{row[col]}"
     end
 
     # check the clinic table itself
     if (is_hit?(str))
+
       cols.each do |col|
         if (test_field(row, "clinics,#{col}", row[col]))
           is_bad_clinic = true
@@ -244,7 +290,7 @@ class GetBanned
                 join Procedures p on p.id = cpp.procid
                 where
                 cpp.clinicid = #{clinic_id} and cpp.status = 1 and p.status = 0
-                and not (coalesce(cpp.treatment, p.name) = p.name and len(coalesce(cpp.details, '')) = 0) and ("
+                and not (coalesce(cpp.treatment, p.name) = p.name and len(coalesce(cpp.details, '')) = 0) "
 
     return check_rows_for_clinic("Clinic_ProcedurePricing", str_sql, @treatment_cols)
   end
@@ -339,7 +385,7 @@ class GetBanned
     return ret
   end
 
-  def read_file_to_array(file_name,remove_newlines = false)
+  def read_file_to_array(file_name, remove_newlines = false)
 
     ret = []
     return ret unless (File.exists? file_name)
@@ -348,8 +394,8 @@ class GetBanned
 
     f.each_line do |line|
 
-      if(remove_newlines)
-        ret << line.gsub(/\n/,"")
+      if (remove_newlines)
+        ret << line.gsub(/\n/, "")
       else
 
         ret << line
