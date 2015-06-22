@@ -25,12 +25,12 @@ class GetBanned
 
     @run_time_stamp = Time.now.strftime("%m-%d_%H-%M-%S")
     # columns under test
-    @clinic_cols = ["name", "shortdescription", "longdescription"]
+    @clinic_cols = ["name", "shortdescription", "longdescription","Address1","Address2","City","State","PostalCode"]
     @treatment_cols = ["treatment", "details"]
     @staff_cols = ["BioHTML", "Name", "LastName", "Additional_Notes", "Premises", "Special_Interests"]
     @feedback_cols = ["Comments"]
     @reviews_cols = ["UserName", "TEXT", "Title", "staffname", "YouRecommend", "YouReturn", "PlaceName", "HowTravel", "ClinicsResponse", "TreatmentName", "ClinicComment"]
-
+    @service_cols = ["Description"]
     @banned_keywords = get_banned_keywords
 
 
@@ -69,6 +69,112 @@ class GetBanned
   end
 
   def get_clinics_to_process
+
+
+    return [206856]
+    return [174380]
+
+    return [163158,
+            166378,
+            166314,
+            162385,
+            160858,
+            171684,
+            171783,
+            171879,
+            174380,
+            168221,
+            168217,
+            168218,
+            168230,
+            168225,
+            168226,
+            168207,
+            168205,
+            168213,
+            168215,
+            168212,
+            168235,
+            168234,
+            168233,
+            168244,
+            168242,
+            168241,
+            168201,
+            168160,
+            168155,
+            168156,
+            168157,
+            168167,
+            168166,
+            168163,
+            168165,
+            168146,
+            168141,
+            168142,
+            168151,
+            168152,
+            168147,
+            168149,
+            168190,
+            168191,
+            168192,
+            168189,
+            168186,
+            168187,
+            168197,
+            168198,
+            168196,
+            168193,
+            168195,
+            168174,
+            168175,
+            168173,
+            168170,
+            168172,
+            168182,
+            168181,
+            168177,
+            168180,
+            168101,
+            168103,
+            168099,
+            168096,
+            168097,
+            168098,
+            168108,
+            168109,
+            168095,
+            168085,
+            168086,
+            168084,
+            168081,
+            168082,
+            168083,
+            168092,
+            168093,
+            168094,
+            168091,
+            168089,
+            168090,
+            168131,
+            168132,
+            168127,
+            168128,
+            168137,
+            168138,
+            168139,
+            168136,
+            168134,
+            168135,
+            168125,
+            168115,
+            168116,
+            168117,
+            168114,
+            168111]
+
+
     puts "getting list of clinics"
 
     source_array = read_file_to_array("logs-sun-14th-evening/bad_all.log", true)
@@ -136,7 +242,7 @@ class GetBanned
 
     clinics_sql = "SELECT row_num,ID,supplierId,Id as clinicId,#{cols.join(",")}
                       FROM (SELECT  row_number() OVER (ORDER BY c.id) AS row_num,
-                      c.id,c.supplierId as supplierId,#{cols.join(",")}
+                      c.id,c.supplierId as supplierId,c.#{cols.join(",c.")}
                       FROM Clinics c JOIN Suppliers s ON c.supplierid = s.id AND s.status != 0
                       ) as sub
                       where ID = #{clinic_id}"
@@ -266,6 +372,9 @@ class GetBanned
     # reviews
     is_bad_clinic = true if check_reviews_for_clinic(row["ID"])
 
+    # clinic services
+    is_bad_clinic = true if check_services_for_clinic(row["ID"])
+
     # log the result
     @batch_results << {result: :clean, message: row["ID"], clinic_id: row["ID"]} unless is_bad_clinic
 
@@ -307,6 +416,13 @@ class GetBanned
     return check_rows_for_clinic("reviews", str_sql, @reviews_cols)
   end
 
+  def check_services_for_clinic(clinic_id)
+    cols = @reviews_cols.clone
+    cols.delete("TreatmentName") # remove this special case here cos we compute it in SQL
+    str_sql = "select clinicid as clinicId, id as ID, #{@service_cols.join(",")} from clinics_services where clinicId = #{clinic_id}"
+    return check_rows_for_clinic("clinics_services", str_sql, @service_cols)
+
+  end
 
   # generic processing for query and individual rows
   def check_rows_for_clinic(table, str_sql, cols)
