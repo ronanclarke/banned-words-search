@@ -4,16 +4,67 @@ require_relative 'common.rb'
 
 class GetBanned < Common
 
+  def find_bad_synonyms
+    synonyms = read_file_to_array("all-synonyms.db",true)
+
+    puts synonyms.size
+
+
+    synonyms.each do |synonym|
+
+      @compiled_regexes.each do |r|
+
+        res = r.match(synonym)
+        if res
+
+          str = "synonym:: '#{synonym}' match for ==>  #{res[0]}"
+          puts str
+
+
+        end
+      end
+
+    end
+  end
+
+  def find_bad_locations
+
+    locations = read_file_to_array("all_locations.db",true)
+
+    puts locations.size
+
+
+    locations.each do |location|
+
+      @compiled_regexes.each do |r|
+
+        res = r.match(location)
+        if res
+
+          str = "location:: #{location} match for ==>  #{res[0]}"
+          puts str
+
+
+        end
+      end
+
+    end
+  end
 
   def init()
 
     load_config
+
 
     process_index = 1
     process_count = 1
 
     puts "starting process #{process_index} of #{process_count}"
     @process_index = 1
+
+    # find_bad_locations
+    find_bad_synonyms
+    return
 
     clinics_to_process = get_clinics_to_process
 

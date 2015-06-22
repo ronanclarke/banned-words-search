@@ -58,9 +58,9 @@ class GetBanned < Common
 
     begin
       do_batch_of_clinics(process_index, ranges[process_index], ranges[process_index+1])
-    # rescue
-    #   puts "got a blowup restarting ....."
-    #  init(procces_count,process_index)
+    rescue
+       puts "got a blowup restarting ....."
+      init(procces_count,process_index)
     end
 
 
