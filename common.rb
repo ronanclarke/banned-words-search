@@ -8,10 +8,10 @@ class Common
     @username = "enreport"
     @password = "enreport"
 
-    # @host = "prod.db.whatclinic.com"
-    # @db = "prod"
-    # @username = "prod"
-    # @password = "prod"
+    @host = "banned-words.windows.whatclinic.net"
+    @db = "wcc"
+    @username = "local"
+    @password = "local"
 
     @run_time_stamp = Time.now.strftime("%m-%d_%H-%M-%S")
     # columns under test
