@@ -12,6 +12,3 @@ PLATFORMS
 DEPENDENCIES
   spreadsheet
   tiny_tds
-
-BUNDLED WITH
-   1.10.1

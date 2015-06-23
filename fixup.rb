@@ -26,7 +26,7 @@ class FixUp
     fixed_array = []
     source.each do |row|
       arr_row = row.split(",")
-      clinic_id = arr_row[0]
+      clinic_id = arr_row[1]
 
       # add the clinic name
       res = client.execute("select name from clinics where id = #{clinic_id}")
