@@ -1,0 +1,302 @@
+32768,38333,38333,clinics,Address2,Artane,Dr M Maguire
+32780,38345,38345,clinics,City,Miltown,Dr Mahon Sean
+32930,38495,46997,reviews,TreatmentName,implanon,Bridge House Surgery
+34247,39884,39884,clinics,Address1,Artane,Chen Hong - Medical Centre
+34343,39992,39992,clinics,Address2,Artane,Stephen Cleary
+34343,39992,39992,clinics,City,Artane,Stephen Cleary
+34560,40558,32009,reviews,ClinicsResponse,Juvederm,Elan Medical Skin Clinic - Rayleigh
+34560,40558,47925,reviews,TreatmentName,Botox,Elan Medical Skin Clinic - Rayleigh
+34560,40558,51353,reviews,TreatmentName,Botox,Elan Medical Skin Clinic - Rayleigh
+34560,40558,54014,reviews,TreatmentName,Botox,Elan Medical Skin Clinic - Rayleigh
+34737,40976,45954,reviews,TEXT,Valium,Sacred Heart Dental Clinic
+34744,40983,690263,clinics_services,Description,botox,Oliver's Dental Studio
+85556,91713,54653,reviews,TreatmentName,Botox,Dermalis
+85556,91713,59642,reviews,TreatmentName,Botox,Dermalis
+85556,91713,60186,reviews,TreatmentName,Botox,Dermalis
+85556,91713,61049,reviews,TreatmentName,Botox,Dermalis
+85595,91773,79675,leadfeedback,Comments,sculptra,Amaris B. Clinic
+85597,91775,91775,clinics,shortdescription,Sculptra,Health + Aesthetics Farnham
+85807,92136,42304,reviews,ClinicsResponse,Botox,Essence Medical
+85807,92136,60663,reviews,TreatmentName,botox,Essence Medical
+85842,92173,727969,clinics_services,Description,Botox,CosmeticliniC
+86327,92839,52842,reviews,TreatmentName,Botox,Dr. Rita Rakus
+86452,92963,9450,reviews,ClinicsResponse,botox,Kathryn Revell Cosmetic
+86452,92963,10006,reviews,YouReturn,Restylane,Kathryn Revell Cosmetic
+86452,92963,35028,reviews,ClinicsResponse,Botox,Kathryn Revell Cosmetic
+86452,92963,55758,reviews,TreatmentName,Botox,Kathryn Revell Cosmetic
+86616,93132,918091,clinics_services,Description,Botox,Dental Studios by Simon Goran
+86747,93284,93284,clinics,shortdescription,Sculptra,I-Time Clinic
+86747,93284,49427,reviews,TreatmentName,botox,I-Time Clinic
+86747,93284,49510,reviews,TreatmentName,Botox,I-Time Clinic
+86930,94025,53615,reviews,TreatmentName,Botox,Re-Nu Skin Clinic
+87128,94142,13425,reviews,TEXT,allay,Onslow Gardens Dental Practice
+87487,95485,8189,reviews,TreatmentName,Sculptra,Cutis Cosmetic Clinic
+86045,97140,124914,Staffs,BioHTML,imiquimod,Solas Dermatology and Laser  Clinic
+89000,97222,47774,reviews,TreatmentName,botox,Dr Reginald Carr
+89161,97418,97418,clinics,Address1,SULAR,ERKUT AKÇALI
+89247,97516,60946,reviews,TreatmentName,restylane,Kim Jong-seo Plastic Surgery Clinic
+89247,97516,60947,reviews,TreatmentName,restylane,Kim Jong-seo Plastic Surgery Clinic
+89937,98214,52648,reviews,TreatmentName,Botox,Peach Practice
+91121,99500,2501,reviews,YouReturn,definity,Turret Orthodontics
+91318,99701,401598,leadfeedback,Comments,Botox,Hospital Universitario Lenin
+116821,100122,100122,clinics,longdescription,SCULPTRA,United Medical Aesthetics
+92310,100732,598357,leadfeedback,Comments,botox,Centro de Otorrinolaringologia y especialidades
+92376,100797,774415,clinics_services,Description,Botox,Centre For Cosmetic & Reconstructive Surgery
+92376,100797,774415,clinics_services,Description,Juvederm,Centre For Cosmetic & Reconstructive Surgery
+92376,100797,774415,clinics_services,Description,Perlane,Centre For Cosmetic & Reconstructive Surgery
+92376,100797,774415,clinics_services,Description,Restylane,Centre For Cosmetic & Reconstructive Surgery
+92975,101535,774470,clinics_services,Description,botox,Ambrosia Clinic
+92975,101535,774470,clinics_services,Description,Juvederm,Ambrosia Clinic
+93664,102299,1002765,clinics_services,Description,botox,Aquis Aesthetics
+93699,102341,102341,clinics,shortdescription,SCULPTRA,Skintalks
+93745,102394,102394,clinics,shortdescription,Sculptra,ALS Cosmetic LLP
+94031,102809,102809,clinics,Address2,Artane,the health plex
+94666,103545,103545,clinics,shortdescription,Sculptra,sk:n clinics - East Finchley
+94666,103555,103555,clinics,shortdescription,Sculptra,sk:n clinics - Victoria
+94666,103556,103556,clinics,shortdescription,Sculptra,sk:n clinics - Harley Street
+94666,103557,103557,clinics,shortdescription,Sculptra,sk:n clinics – Holborn
+94666,103558,103558,clinics,shortdescription,Sculptra,sk:n clinics - London Wall
+94666,103559,103559,clinics,shortdescription,Sculptra,sk:n clinics - Maida Vale
+94666,103560,103560,clinics,shortdescription,Sculptra,sk:n clinics - Shaftesbury Avenue
+94666,103561,103561,clinics,shortdescription,Sculptra,sk:n clinics - Canary Wharf
+94666,103562,103562,clinics,shortdescription,Sculptra,sk:n clinics - Brighton
+94666,103563,103563,clinics,shortdescription,Sculptra,sk:n clinics - Bristol
+94666,103564,103564,clinics,shortdescription,Sculptra,sk:n clinics - Chelmsford
+94666,103565,103565,clinics,shortdescription,Sculptra,sk:n clinics - Guildford
+94666,103566,103566,clinics,shortdescription,Sculptra,sk:n clinics - Portsmouth
+94666,103567,103567,clinics,shortdescription,Sculptra,sk:n clinics - Southampton
+94666,103568,103568,clinics,shortdescription,Sculptra,sk:n clinics - Epson
+94666,103569,103569,clinics,shortdescription,Sculptra,sk:n clinics - Bicester
+94666,103570,103570,clinics,shortdescription,Sculptra,sk:n clinics – Birmingham Bull Street
+94666,103571,103571,clinics,shortdescription,Sculptra,sk:n clinics – Birmingham Edgbaston
+94666,103572,103572,clinics,shortdescription,Sculptra,sk:n clinics - Cheltenham
+94666,103573,103573,clinics,shortdescription,Sculptra,sk:n clinics - Leamington Spa
+94666,103574,103574,clinics,shortdescription,Sculptra,sk:n clinics - Leicester
+94666,103575,103575,clinics,shortdescription,Sculptra,sk:n clinics - Milton Keynes
+94666,103576,103576,clinics,shortdescription,Sculptra,sk:n clinics - Northampton
+94666,103577,103577,clinics,shortdescription,Sculptra,sk:n clinics - Norwich
+94666,103578,103578,clinics,shortdescription,Sculptra,sk:n clinics - Nottingham
+94666,103580,103580,clinics,shortdescription,Sculptra,sk:n clinics - Wolverhampton
+94666,103581,103581,clinics,shortdescription,Sculptra,sk:n clinics - Aberdeen
+94666,103582,103582,clinics,shortdescription,Sculptra,sk:n clinics - Edinburgh
+94666,103583,103583,clinics,shortdescription,Sculptra,sk:n clinics - Glasgow
+94666,103584,103584,clinics,shortdescription,Sculptra,sk:n clinics - Leeds
+94666,103585,103585,clinics,shortdescription,Sculptra,sk:n clinics - Liverpool
+94666,103586,103586,clinics,shortdescription,Sculptra,sk:n clinics - Manchester
+94666,103587,103587,clinics,shortdescription,Sculptra,sk:n clinics - Middlesbrough
+94666,103588,103588,clinics,shortdescription,Sculptra,sk:n clinics - Newcastle
+94666,103589,103589,clinics,shortdescription,Sculptra,sk:n clinics - Sheffield
+94879,103825,46276,reviews,TreatmentName,Botox,BeauSynergy
+95267,104315,32521,reviews,TreatmentName,Sculptra,Courthouse Clinics - Wilmslow
+95552,104640,47122,reviews,TreatmentName,Botox,Dr. Mark Aszkenasy BACD
+95552,104640,47376,reviews,TreatmentName,Botox,Dr. Mark Aszkenasy BACD
+95552,104640,47420,reviews,TreatmentName,Botox,Dr. Mark Aszkenasy BACD
+95552,104640,47633,reviews,TreatmentName,Botox,Dr. Mark Aszkenasy BACD
+95552,104640,49750,reviews,TreatmentName,Botox,Dr. Mark Aszkenasy BACD
+95552,104640,51646,reviews,TreatmentName,Botox,Dr. Mark Aszkenasy BACD
+95552,104640,57066,reviews,TreatmentName,Botox,Dr. Mark Aszkenasy BACD
+95552,104640,60747,reviews,TreatmentName,Botox,Dr. Mark Aszkenasy BACD
+95552,104640,62931,reviews,TreatmentName,Botox,Dr. Mark Aszkenasy BACD
+95651,104751,104751,clinics,longdescription,Camila,Evertton Dentistry
+95803,104954,60111,reviews,TreatmentName,Botox,Miracle Aesthetic Clinic - Kuta Bali
+95864,105042,45914,reviews,TreatmentName,Botox,Surface Beauty Aesthetics Ltd
+95864,105042,46169,reviews,TreatmentName,Botox,Surface Beauty Aesthetics Ltd
+95864,105042,55104,reviews,TreatmentName,botox,Surface Beauty Aesthetics Ltd
+95864,105042,56881,reviews,TreatmentName,Botox,Surface Beauty Aesthetics Ltd
+95956,105155,732836,clinics_services,Description,Amoxicillin,The Surgery - Majid Vahid
+95890,105163,964989,Clinic_ProcedurePricing,details,bevacizumab,Ultimo Aesthetic & Dental Center - Surabaya
+95978,105177,105177,clinics,shortdescription,Sculptra,No8 Dental and Cosmetic
+96196,105404,105404,clinics,shortdescription,Sculptra,Temple Medical Ltd
+96229,105461,62791,reviews,TreatmentName,Botox,Ageless
+96229,105461,62925,reviews,TreatmentName,Botox,Ageless
+96357,105608,24347,reviews,ClinicsResponse,botox,Auralia - Limerick
+96376,105629,56060,reviews,TreatmentName,botox,Cork Dental Care
+96470,105844,59240,reviews,TreatmentName,botox,Dr Cosmetic Skin Clinic
+96474,105848,46548,reviews,TreatmentName,Botox,Pall Mall Medical
+96513,105900,7601,reviews,ClinicsResponse,Botox,My Beauty Doctor
+96513,105900,19203,reviews,ClinicsResponse,botox,My Beauty Doctor
+96564,105966,50037,reviews,TreatmentName,Botox,The Wellfield Skin Clinic
+96564,105966,48718,reviews,TreatmentName,Botox,The Wellfield Skin Clinic
+96682,106097,106097,clinics,shortdescription,Sculptra,Outline Skincare
+96810,106276,999813,clinics_services,Description,Botox,Therapie Clinic Dublin
+96836,106306,10147,reviews,TEXT,clomid,Jo George
+96841,106315,59512,reviews,TreatmentName,Botox,Bosworth Aesthetics & Beauty
+97102,106611,49941,reviews,TreatmentName,botox,Dermcare Clinic- Subang
+97230,106770,106770,clinics,shortdescription,Sculptra,Britedent
+97514,107105,151558,leadfeedback,Comments,accutane,Stamford Skin Centre
+97652,107297,55133,reviews,ClinicsResponse,Artane,Dr Joseph Beirne
+97876,107611,107611,clinics,Address1,Beyaz,Denta Life
+98123,107918,46516,reviews,TreatmentName,Botox,DermaHealth
+98123,107918,800658,clinics_services,Description,Botox,DermaHealth
+98123,107918,800658,clinics_services,Description,Juvederm,DermaHealth
+98123,107918,800658,clinics_services,Description,Restylane,DermaHealth
+98123,107918,800660,clinics_services,Description,Botox,DermaHealth
+98530,108423,46764,reviews,TreatmentName,botox,Kienecker Medical Ltd.
+98530,108423,48078,reviews,TreatmentName,botox,Kienecker Medical Ltd.
+98735,108649,108649,clinics,shortdescription,Sculptra,Advance Clinic
+98806,108732,52622,reviews,TreatmentName,Botox,The Melrose Aesthetic Centre
+98806,108732,53327,reviews,TreatmentName,Botox,The Melrose Aesthetic Centre
+98841,108773,108773,clinics,Address1,Artane,Northside Osteopathy
+98841,108773,108773,clinics,Address2,Artane,Northside Osteopathy
+98998,108948,54958,reviews,TreatmentName,Botox,Barbara Pointon
+98998,108948,51567,reviews,TreatmentName,botox,Barbara Pointon
+98998,108948,52088,reviews,TreatmentName,Botox,Barbara Pointon
+98998,108948,53035,reviews,TreatmentName,botox,Barbara Pointon
+98998,108948,59210,reviews,TreatmentName,Botox,Barbara Pointon
+99008,108958,48007,reviews,TreatmentName,BOTOX,Quinn Clinics - Bristol
+99008,108958,51155,reviews,TreatmentName,Botox,Quinn Clinics - Bristol
+99008,108958,51155,reviews,TreatmentName,Juvederm,Quinn Clinics - Bristol
+99008,108958,47416,reviews,TreatmentName,Botox,Quinn Clinics - Bristol
+99087,109044,50985,reviews,TreatmentName,Botox,Blue Light Dental Clinic
+99089,109046,59304,reviews,TreatmentName,Botox,Emma Chan Medical Aesthetics and Skin Solutions
+99296,109302,49878,reviews,TreatmentName,botox,Crosby Aesthetics
+99429,109454,49400,reviews,TreatmentName,Botox,Persona Cosmetic Medicine - Bexley
+97291,109483,61571,reviews,TreatmentName,Botox,Skinfinite St Albans
+99627,109695,646966,leadfeedback,Comments,Botox,Renaissance Skin Care - Berwick
+99627,109695,16694,reviews,ClinicsResponse,Restylane,Renaissance Skin Care - Berwick
+99627,109695,51796,reviews,TreatmentName,botox,Renaissance Skin Care - Berwick
+99657,109733,47749,reviews,TreatmentName,Botox,The Green Room - Bournemouth Clinic
+99657,109733,59223,reviews,TreatmentName,Botox,The Green Room - Bournemouth Clinic
+99765,109867,815758,clinics_services,Description,Botox,Emma Wright Aesthetics
+100035,110250,768930,clinics_services,Description,Botox,Prime Care Medical & Dental
+100110,110335,50231,reviews,TreatmentName,Botox,Hebe Aesthetic and Anti-Aging Clinic
+100372,110655,771380,clinics_services,Description,botox,Looks Divine - Nedlands Clinic
+100418,110714,110714,clinics,Address2,artane,Dr Tarekzourob Surgery
+100453,110763,46761,reviews,TreatmentName,Botox,Perfect Image Consultants
+100453,110763,46768,reviews,TreatmentName,Botox,Perfect Image Consultants
+98813,110992,13342,reviews,TreatmentName,Sculptra,Moorgate Aesthetics - Chants
+100785,111198,779803,clinics_services,Description,Botox,Hairatage Salon - Hairdressing & Aesthetics
+98813,111477,13333,reviews,TreatmentName,Sculptra,Moorgate Aesthetics - Harley Street
+98813,111477,14891,reviews,TreatmentName,Sculptra,Moorgate Aesthetics - Harley Street
+101094,111568,1578761,Clinic_ProcedurePricing,details,Ritalin,River Holistic Centre
+101116,111588,64827,reviews,TreatmentName,Botox,Proderma Aesthetic Clinics
+101313,111888,61575,reviews,TreatmentName,Botox,Botastic Aesthetics Ltd
+101355,111946,45675,reviews,TreatmentName,Botox,Cardiff Cosmetic Clinic
+101355,111946,45677,reviews,TreatmentName,botox,Cardiff Cosmetic Clinic
+101355,111946,45688,reviews,TreatmentName,Botox,Cardiff Cosmetic Clinic
+101355,111946,45702,reviews,TreatmentName,Botox,Cardiff Cosmetic Clinic
+101624,112360,49304,reviews,TreatmentName,Botox,Accualaser Plastic Surgery Associates
+101671,112429,47273,reviews,TreatmentName,botox,The Rosenstock Lieberman Plastic Surgery Center
+101671,112429,51426,reviews,TreatmentName,dysport,The Rosenstock Lieberman Plastic Surgery Center
+101787,112577,49448,reviews,TreatmentName,botox,Monday's Child
+101787,112577,53071,reviews,TreatmentName,Botox,Monday's Child
+101787,112577,52190,reviews,TreatmentName,Botox,Monday's Child
+101787,112577,62638,reviews,TreatmentName,Botox,Monday's Child
+101787,112577,57410,reviews,TreatmentName,botox,Monday's Child
+101910,112747,58026,reviews,TreatmentName,Botox,SaRivaa Aesthetics
+101910,112747,46642,reviews,TreatmentName,Botox,SaRivaa Aesthetics
+102013,112855,112855,clinics,Address2,Artane,Dr Wagdy Mitry
+102045,112900,151161,Staffs,BioHTML,meth,Lidums Dental
+102086,112969,112969,clinics,Address1,Sonata,Dentists on Broadbeach
+102358,113312,792473,clinics_services,Description,Botox,Sandes Avenue Dental Practice
+102495,113523,48095,reviews,TreatmentName,Botox,Paarl Aesthetics Medicine
+88924,113639,1964076,Clinic_ProcedurePricing,details,Lumigan,Medicetics Harley Street
+102548,113676,52636,reviews,TreatmentName,botox,Bicester Clinic
+102548,113676,55550,reviews,TreatmentName,Botox,Bicester Clinic
+102548,113676,55551,reviews,TreatmentName,Botox,Bicester Clinic
+102783,114174,54271,reviews,TreatmentName,Botox,Aesthetic Transitions Purley
+102783,114174,54274,reviews,TreatmentName,Botox,Aesthetic Transitions Purley
+103088,114746,54280,reviews,TreatmentName,Botox,Midas Touch Med Spa
+103088,114746,62468,reviews,TreatmentName,Botox,Midas Touch Med Spa
+103236,114938,114938,clinics,Address1,Beyaz,Op.Dr. Hüseyin Altun
+103250,114953,48164,reviews,TreatmentName,botox,Dr Ban Ratti Medical Aesthetics Surbiton
+103496,115441,54763,reviews,TreatmentName,Botox,Radiant Medical Phuket
+103599,115571,559373,leadfeedback,Comments,sculptra,Absolute Image
+103633,115611,16619,reviews,TEXT,sculptra,Celevenus Wellness & Aesthetic Clinic
+103633,115611,16619,reviews,Title,sculptra,Celevenus Wellness & Aesthetic Clinic
+103633,115611,16619,reviews,TreatmentName,sculptra,Celevenus Wellness & Aesthetic Clinic
+103633,115611,39044,reviews,TreatmentName,Sculptra,Celevenus Wellness & Aesthetic Clinic
+103633,115611,32879,reviews,TreatmentName,Sculptra,Celevenus Wellness & Aesthetic Clinic
+104005,116129,1012293,clinics_services,Description,botox,Dentistry at the Gallery
+95890,116190,1216464,Clinic_ProcedurePricing,details,bevacizumab,Ultimo Aesthetic & Dental Center- Bali
+95890,116190,48802,reviews,TreatmentName,Botox,Ultimo Aesthetic & Dental Center- Bali
+99627,116257,19211,reviews,ClinicsResponse,Restylane,Renaissance Skin Care- Mornington
+104200,116347,51945,reviews,TreatmentName,Botox,Nitai Medical & Cosmetic Centre
+104200,116347,52164,reviews,TreatmentName,Botox,Nitai Medical & Cosmetic Centre
+104337,116546,566562,leadfeedback,Comments,botox,Klinik Harmoni (Dr Hon Aesthetic Clinic)
+99103,116731,1228434,Clinic_ProcedurePricing,details,Finasteride,Elite Hair Restoration Bristol
+99103,116732,1228438,Clinic_ProcedurePricing,details,Finasteride,Elite Hair Restoration Birmingham
+99103,116733,1228442,Clinic_ProcedurePricing,details,Finasteride,Elite Hair Restoration Leeds
+99103,116734,1228446,Clinic_ProcedurePricing,details,Finasteride,Elite Hair Restoration Newcastle
+99103,116738,1228617,Clinic_ProcedurePricing,details,Finasteride,Elite Hair Restoration Manchester
+104543,116867,46269,reviews,TreatmentName,botox,Dr Hardik Patel: Ascot
+104790,117088,48179,reviews,TreatmentName,Mirena,Veduta Clinic
+104859,117178,34282,reviews,Title,Yasmin,Dr. Michael's Dental Clinic
+104966,117297,64522,reviews,TreatmentName,Botox,SkinViva Manchester
+104966,117297,64667,reviews,TreatmentName,Botox,SkinViva Manchester
+105019,117428,117428,clinics,longdescription,Insulin,Livelife Hospitals
+105302,117774,1251316,Clinic_ProcedurePricing,details,EMLA,Dr. Pather Aesthetics - Hillingdon
+105549,118148,52023,reviews,TreatmentName,Botox,Botique Facial Aesthetics
+105413,118312,118312,clinics,shortdescription,versed,GeneralSurgery Ltd at Xanit International Hospital
+106555,118746,57978,reviews,TreatmentName,botox,Apex Profound Beauty - Royal Garden Plaza Pattaya
+106134,118901,118901,clinics,shortdescription,Gardasil,St Peter's Travel Clinic
+18909,118960,118960,clinics,shortdescription,sculptra,Enhance UK - Aspire Bury Knowle Dental Practice
+18909,118961,118961,clinics,shortdescription,sculptra,Enhance UK - Aspire Bridge Street Dental Practice
+18909,118962,118962,clinics,shortdescription,sculptra,Enhance UK - Aspire Hampshire Healthcare Centre
+18909,118963,118963,clinics,shortdescription,sculptra,Enhance UK - Aspire Havant Dental Practice
+18909,118964,118964,clinics,shortdescription,sculptra,Enhance UK - Aspire Dagenham Dental Practice
+18909,118965,118965,clinics,shortdescription,sculptra,Enhance UK - Aspire Island Health Dental
+18909,118966,118966,clinics,shortdescription,sculptra,Enhance UK - Aspire Amersham Dental
+18909,118967,118967,clinics,shortdescription,sculptra,Enhance UK - Aspire Aylesbury Dental
+18909,118969,118969,clinics,shortdescription,sculptra,- Aspire Lee-on-Solent Dental
+106199,118984,48816,reviews,TreatmentName,Botox,Shapers
+106354,119168,54464,reviews,TreatmentName,Botox,Face Perfect Clinic - Leeds
+106354,119168,53346,reviews,TreatmentName,Botox,Face Perfect Clinic - Leeds
+106354,119168,52456,reviews,TreatmentName,botox,Face Perfect Clinic - Leeds
+106354,119168,45747,reviews,TreatmentName,Botox,Face Perfect Clinic - Leeds
+106354,119168,53664,reviews,TreatmentName,Botox,Face Perfect Clinic - Leeds
+106354,119168,46337,reviews,TreatmentName,Botox,Face Perfect Clinic - Leeds
+106392,119223,119223,clinics,Address1,Beyaz,Estetistanbul
+98506,119412,3509989,Clinic_ProcedurePricing,details,Sculptra,Stratford Dermatherapy Clinic - Chantilly
+106529,119529,56437,reviews,TreatmentName,Botox,Alpha Chiropractic and Sports Injury Clinic
+106715,119772,55190,reviews,TEXT,finasteride,COSMEDICA Hair Transplant
+106870,120038,61010,reviews,TreatmentName,Botox,Hilton Skin Clinics
+107055,120269,56534,reviews,TreatmentName,Botox,The London Face
+120085,120497,164191,Staffs,BioHTML,insulin,IREGA Cancun
+107371,120754,54587,reviews,TreatmentName,botox,Angela Woodcock Clinic Hull
+107507,120945,61878,reviews,TreatmentName,Botox,Stay Beautiful
+107507,120945,52090,reviews,TreatmentName,Botox,Stay Beautiful
+107507,120945,60749,reviews,TreatmentName,Juvederm,Stay Beautiful
+107640,121118,121118,clinics,Address1,Meridia,Richard Rival Cosmetic Surgery Toronto Central
+107736,121230,1998757,Clinic_ProcedurePricing,details,BOTOX,Laser Esthetiques & Guelph Vein Clinic
+107736,121230,2603533,Clinic_ProcedurePricing,details,Latisse,Laser Esthetiques & Guelph Vein Clinic
+107783,121292,65335,reviews,TreatmentName,Botox,Cindy Knight Clinic
+107848,121392,639173,leadfeedback,Comments,Sculptra,Murphy Laser
+108332,121999,63226,reviews,TreatmentName,Botox,North West Aesthetics
+108340,122008,45266,reviews,TreatmentName,Botox,Enhance Clinic Penrith
+108723,122465,122465,clinics,longdescription,cambia,Hair Center Mexico by Bosley
+108723,122465,122465,clinics,longdescription,Propecia,Hair Center Mexico by Bosley
+108774,122520,122520,clinics,longdescription,versed,Helplink
+108785,122543,45273,reviews,TreatmentName,Botox,Smooth Medical at Macclesfield Chesire East
+108790,122570,51842,reviews,TEXT,botox,Artisan Cosmetic and Rejuvenation Clinic
+108790,122570,51842,reviews,TreatmentName,Botox,Artisan Cosmetic and Rejuvenation Clinic
+109189,123218,51136,reviews,TreatmentName,botox,FaceDoctor Clinic
+109193,123225,49897,reviews,TreatmentName,botox,Face Today Clinic Bondi Junction
+109270,123373,123373,clinics,name,Beyaz,Beyaz iNCi
+109316,123440,53000,reviews,TreatmentName,Botox,Laser Clinics Australia Hurstville
+109316,123445,55348,reviews,TEXT,botox,Laser Clinics Australia Parramatta
+109316,123445,55349,reviews,TEXT,botox,Laser Clinics Australia Parramatta
+109474,123648,123648,clinics,longdescription,Soma,The Healing Zone
+109561,123743,26745,reviews,ClinicsResponse,Yasmin,UltraSlim Clinics - Wolverhampton
+109134,124216,532126,leadfeedback,Comments,botox,About Face Skin & Hair - Port Augusta
+109928,124377,56217,reviews,TreatmentName,Botox,Medical Cosmetic Centre
+110005,124458,124458,clinics,longdescription,versed,Lotus Clinic ACT
+110157,124628,57439,reviews,TreatmentName,Botox,Evita Clinic
+110192,124729,233483,leadfeedback,Comments,sculptra,Dr. Prinya Surgery and Skin Laser Center
+110243,124815,124815,clinics,shortdescription,Latisse,Nirvana Laser Hair and Skin Clinic
+110243,124815,124815,clinics,shortdescription,Levulan,Nirvana Laser Hair and Skin Clinic
+110284,124866,48738,reviews,TreatmentName,Botox,Lisa Moore Therapy
+110379,124987,65513,reviews,TreatmentName,botox,The Laser Premium Clinic
+110382,124990,56359,reviews,TreatmentName,Botox,DermaCure Clinic
+110398,125006,125006,clinics,longdescription,Clomid,Jessica Bourke-Natural Fertility Solutions
+110629,125362,56155,reviews,TreatmentName,Sculptra,Laser Skin Clinic
+110664,125433,27437,reviews,ClinicsResponse,botox,Smooth Creation
+101313,125446,544816,leadfeedback,Comments,Botox,Botastic Aesthetics Ltd Scarborough
+110858,125665,50442,reviews,TreatmentName,botox,MD Cosmedical Solutions
+111031,125899,882029,clinics_services,Description,Botox,East Midlands Cosmetic Dental Centre
+111092,125968,49579,reviews,TreatmentName,Botox,ICCM International Centre for Cosmetic Medicine
+111100,125982,35513,reviews,ClinicsResponse,Junel,Dermaster Thailand
+111100,125982,36075,reviews,ClinicsResponse,Junel,Dermaster Thailand
+111100,125982,33660,reviews,ClinicsResponse,Junel,Dermaster Thailand
+111124,126008,126008,clinics,name,Soma,Soma Strata Aesthetica
+111167,126060,45264,reviews,TreatmentName,Botox,Medaesthetics Australia
