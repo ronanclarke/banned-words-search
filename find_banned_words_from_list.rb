@@ -20,7 +20,7 @@ class GetBanned < Common
     # return
 
     clinics_to_process = get_clinics_to_process
-
+    clinics_to_process = [132441]
 
     start_time = Time.now
     counter = 0

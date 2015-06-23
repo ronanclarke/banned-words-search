@@ -214,6 +214,7 @@ class Common
 
     ret = false
     cols.each do |col|
+      if(table == 'reviews' && col.downcase == 'treatmentname' && row[''])
       ret = test_field(row, "#{table},#{col}", row[col])
     end
 
