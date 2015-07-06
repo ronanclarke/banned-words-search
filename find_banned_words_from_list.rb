@@ -55,8 +55,10 @@ class GetBanned < Common
 
 
     start_time = Time.now
-
+    test_clinics_on_url(urls.first)
+    return
     urls.each.each do |url|
+
       test_url_response(url)
       # test_url(url)
 
@@ -91,23 +93,41 @@ class GetBanned < Common
     puts result.join(",")
   end
 
+  def test_clinics_on_url(url)
+    url_bust = url + "&cb=" + Time.now.to_i.to_s
+    uri = URI.parse(url_bust)
+    response = Net::HTTP.get_response(uri)
+
+    puts response["ETag"]
+return
+    clinics_to_scan = [109267,110573]
+    clinics_to_scan.each do |clinic_id|
+
+      do_clinic_by_id(0, clinic_id)
+
+    end
+
+  end
   def test_url_response(url)
     url_bust = url + "&cb=" + Time.now.to_i.to_s
     uri = URI.parse(url_bust)
     response = Net::HTTP.get_response(uri)
-    
+
 
     last_start = Time.now
     body = response.body
 
     result = [url]
     hits= []
+
     @compiled_regexes.each do |r|
 
       res = r.match(body)
       if res
         # puts "got hit for #{res[0]} in page #{url}"
         hits << res[0]
+
+
       end
     end
 
