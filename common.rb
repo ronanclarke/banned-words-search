@@ -13,9 +13,14 @@ class Common
     @username = "local"
     @password = "local"
 
+    @host = "prod.db.whatclinic.com"
+    @db = "prod"
+    @username = "prod"
+    @password = "prod"
+
     @run_time_stamp = Time.now.strftime("%m-%d_%H-%M-%S")
     # columns under test
-    @clinic_cols = ["name", "shortdescription", "longdescription","Address1","Address2","City","State","PostalCode"]
+    @clinic_cols = ["name", "shortdescription", "longdescription", "Address1", "Address2", "City", "State", "PostalCode"]
     @treatment_cols = ["treatment", "details"]
     @staff_cols = ["BioHTML", "Name", "LastName", "Additional_Notes", "Premises", "Special_Interests"]
     @feedback_cols = ["Comments"]
@@ -135,7 +140,7 @@ class Common
     @batch_results << {result: :clean, message: row["ID"], clinic_id: row["ID"]} unless is_bad_clinic
 
     @batch_results.each do |result|
-      log_to_file(result[:result].to_s, "#{row["supplierId"]},#{result[:message]},#{row["name"].to_s.gsub(",","")}")
+      log_to_file(result[:result].to_s, "#{row["supplierId"]},#{result[:message]},#{row["name"].to_s.gsub(",", "")}")
     end
 
   end
@@ -169,7 +174,8 @@ class Common
     cols = @reviews_cols.clone
     cols.delete("TreatmentName") # remove this special case here cos we compute it in SQL
     str_sql = "select clinicid as clinicId, id as ID,CASE WHEN(coalesce(cast(reviewlongtreatment as nvarchar),'')!='') then reviewlongtreatment else TreatmentName end as TreatmentName, #{@reviews_cols.join(",")} from Reviews where status in (0,1,4,5) and clinicId = #{clinic_id}"
-    return check_rows_for_clinic("reviews", str_sql, @reviews_cols)
+
+    return check_rows_for_clinic("reviews", str_sql, cols)
   end
 
   def check_services_for_clinic(clinic_id)

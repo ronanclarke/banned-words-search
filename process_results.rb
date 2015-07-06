@@ -10,10 +10,16 @@ class ProcessResults
     @username = "enreport"
     @password = "enreport"
 
+    @host = "prod.windows.whatclinic.net"
+    @db = "prod"
+    @username = "prod"
+    @password = "prod"
+
+
     file_name = "logs/results_completed_0.log"
 
     #res = read_file_to_array(file_name)
-    @log_dir = File.join(File.dirname(__FILE__), "logs")
+    @log_dir = File.join(File.dirname(__FILE__), "logs-full-rescan-mon-22nd-Jun")
 
     puts @log_dir
     #puts res.size
@@ -25,7 +31,7 @@ class ProcessResults
 
 
     combine_files("completed")
-    combine_files("bad", true)
+    combine_files("bad", false)
     combine_files("clean")
 
 
@@ -125,4 +131,4 @@ class ProcessResults
 
 end
 
-ProcessResults.new.go2
+ProcessResults.new.go
