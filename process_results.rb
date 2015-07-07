@@ -19,13 +19,12 @@ class ProcessResults
     file_name = "logs/results_completed_0.log"
 
     #res = read_file_to_array(file_name)
-    @log_dir = File.join(File.dirname(__FILE__), "logs-full-rescan-mon-22nd-Jun")
+    # @log_dir = File.join(File.dirname(__FILE__), "logs-full-rescan-mon-22nd-Jun")
+    @log_dir = File.join(File.dirname(__FILE__), "2nd-set-of-words/full-rescan-6th-Jul-2015/")
 
     puts @log_dir
     #puts res.size
 
-    @priority_clinics = read_file_to_array("dave_list_of_priority_clinics.txt",true)
-    puts "count of priority clinics #{@priority_clinics.size}"
 
 
 
