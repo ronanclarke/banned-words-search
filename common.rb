@@ -8,7 +8,7 @@ class Common
     @username = "enreport"
     @password = "enreport"
 
-    @host = "hotfix.windows.whatclinic.net"
+    @host = "staging.windows.whatclinic.net"
     
     @db = "wcc"
     @username = "local"
@@ -653,6 +653,7 @@ class Common
   def get_banned_keywords_1
 
     return [
+        'roaccutane',
         '8-mop',
         'a-hydrocort',
         'a-methapred',
