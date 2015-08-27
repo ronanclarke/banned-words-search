@@ -20,13 +20,11 @@ class ProcessResults
 
     #res = read_file_to_array(file_name)
     # @log_dir = File.join(File.dirname(__FILE__), "logs-full-rescan-mon-22nd-Jun")
-    @log_dir = File.join(File.dirname(__FILE__), "2nd-set-of-words/full-rescan-6th-Jul-2015/")
+    #@log_dir = File.join(File.dirname(__FILE__), "2nd-set-of-words/full-rescan-6th-Jul-2015/")
+    @log_dir = File.join(File.dirname(__FILE__), "logs")
 
     puts @log_dir
     #puts res.size
-
-
-
 
 
     combine_files("completed")
@@ -63,7 +61,7 @@ class ProcessResults
       client = TinyTds::Client.new username: @username, password: @password, host: @host, database: @db
 
 
-      all.each_with_index  do |each,i|
+      all.each_with_index do |each, i|
 
         clinic_id = each.split(",")[0].to_i
         result = client.execute("select s.Id as supplierId,s.SupplierType,s.TermsID  FROM Clinics c JOIN Suppliers s ON c.supplierid = s.id where c.ID = #{clinic_id}")
@@ -80,7 +78,6 @@ class ProcessResults
           end
 
           termsAccepted = res["TermsID"] ? "Yes" : "No"
-
 
 
           prepend = [is_priority, res["supplierId"], supplierType, termsAccepted].join(",")
@@ -102,12 +99,42 @@ class ProcessResults
 
     end
 
+    whitelisted_terms = ["hawthorn","artane"]
+    final = []
+    all_terms = []
+    if (type == "bad")
+      all.each_with_index do |each, i|
+        term = each.split(",")[5].to_s
+        term.downcase!
+        # get counts of duplicates
+
+
+
+        all_terms << term
+        if (!whitelisted_terms.include? term)
+          final << each
+        end
+      end
+
+      all_terms = all_terms - whitelisted_terms
+      grouped = all_terms.inject(Hash.new(0)) { |h, e| h[e] += 1 ; h }
+      sorted = grouped.sort_by { |name,count| count * -1}
+      sorted.each do |item|
+        puts "#{item[0]} #{item[1]}"
+      end
+    end
+
+    if (final.size > 0)
+      all = final
+    end
+
+
     File.open(combined_file, "w+") do |f|
       f.puts(all)
     end
   end
 
-  def read_file_to_array(file_name,remove_newlines = false)
+  def read_file_to_array(file_name, remove_newlines = false)
 
     ret = []
     return ret unless (File.exists? file_name)
@@ -116,8 +143,8 @@ class ProcessResults
 
     f.each_line do |line|
 
-      if(remove_newlines)
-        ret << line.gsub(/\n/,"")
+      if (remove_newlines)
+        ret << line.gsub(/\n/, "")
       else
 
         ret << line

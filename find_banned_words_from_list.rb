@@ -19,7 +19,14 @@ class GetBanned < Common
     puts "starting process #{process_index} of #{process_count}"
     @process_index = 1
     start_time = Time.now
+
+
+    check_suppliers_pictures
+    return
+
+    # checking specific list of urls
     check_urls
+
     #find_bad_locations
     # find_bad_synonyms
 
@@ -51,17 +58,41 @@ class GetBanned < Common
 
   end
 
+  def check_suppliers_pictures
+
+    str_sql = "select id, filename,url from suppliers_pictures"
+
+    client = TinyTds::Client.new username: @username, password: @password, host: @host, database: @db
+    result = client.execute(str_sql)
+
+    result.each do |result|
+      to_check = [result["filename"],result["url"]]
+      current_id = result["id"]
+      to_check.each do |field|
+        @compiled_regexes.each do |r|
+          res = r.match(field)
+          if res
+            puts "found match for #{res[0]} in #{result["id"]} : #{field}"
+          end
+        end
+      end
+    end
+
+  end
+
   def check_urls
     urls = read_file_to_array("urls-to-check.db", true)
 
 
     start_time = Time.now
-
+    counter = 0
     urls.each.each do |url|
 
+      puts counter
+      counter = counter + 1
       puts "testing #{url}"
-      test_clinics_on_url(url)
-      # test_url_response(url)
+      # test_clinics_on_url(url)
+      test_url_response(url)
       # test_url(url)
 
 
@@ -77,7 +108,7 @@ class GetBanned < Common
     hits= []
 
     @compiled_regexes.each do |r|
-      url = url.gsub("-"," ")
+      url = url.gsub("-", " ")
       res = r.match(url)
       if res
         puts "got hit"
@@ -99,9 +130,12 @@ class GetBanned < Common
     url_bust = url + "&cb=" + Time.now.to_i.to_s
     uri = URI.parse(url_bust)
     response = Net::HTTP.get_response(uri)
-
+    puts response["X-WCC-META"]
+    if !response
+      puts "feck"
+    end
     meta = JSON.parse(response["X-WCC-META"])
-    clinics_to_scan = meta["clinics"].collect {|x| x["id"]}
+    clinics_to_scan = meta["clinics"].collect { |x| x["id"] }
 
     clinics_to_scan.each do |clinic_id|
 
@@ -110,11 +144,18 @@ class GetBanned < Common
     end
 
   end
+
   def test_url_response(url)
-    url_bust = url + "&cb=" + Time.now.to_i.to_s
+    url_bust = url + "&cd=M&cb=" + Time.now.to_i.to_s
+    puts url_bust
     uri = URI.parse(url_bust)
     response = Net::HTTP.get_response(uri)
 
+    if response.code.to_s != "200"
+      log_to_file("fails", "non-200,#{url_bust} , response code:: #{response.code}")
+      log_to_file("result_for_page_scan", "#{url_bust}, non-200,#{response.code}")
+      return
+    end
 
     last_start = Time.now
     body = response.body
@@ -126,11 +167,19 @@ class GetBanned < Common
 
       res = r.match(body)
       if res
-        # puts "got hit for #{res[0]} in page #{url}"
+        puts "got hit for #{res[0]} in page #{url}"
+
+        log_to_file("fails", "banned-term,#{url} , #{res[0]}")
         hits << res[0]
 
 
       end
+    end
+
+    if (hits.size > 0)
+      log_to_file("result_for_page_scan", "#{url_bust},banned-term, #{hits.join('|')}")
+    else
+      log_to_file("result_for_page_scan", "#{url_bust},ok")
     end
 
     result = hits.size > 0 ? ["FAIL"] : ["PASS"]
