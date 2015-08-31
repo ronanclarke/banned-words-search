@@ -13,25 +13,30 @@ class CheckUrls < Common
 
 
     load_config # load the config e.g. what db to talk to etc
-    get_banned_keywords
+    @banned_keywords = get_banned_keywords
 
+    check_urls
 
   end
 
   def check_urls
-    urls = read_file_to_array("urls-to-check.db", true)
+    urls = read_file_to_array("data/urls_to_check.db", true)
+
+    puts "#{urls.size} urls to check "
 
 
     start_time = Time.now
     counter = 0
+
+    # urls = [urls[0]]
+
     urls.each.each do |url|
 
       puts counter
       counter = counter + 1
-      puts "testing #{url}"
-      # test_clinics_on_url(url)
+
       test_url_response(url)
-      # test_url(url)
+      test_url_response(url, true) # send true so we fetch the mobile version using the cookie switch
 
 
     end
@@ -40,19 +45,25 @@ class CheckUrls < Common
     puts "time taken #{end_time-start_time} for #{urls.size} urls (#{(end_time-start_time)/urls.size}/per url)"
   end
 
-  def test_url_response(url)
-    url_bust = url + "&cd=M&cb=" + Time.now.to_i.to_s
-    puts url_bust
-    uri = URI.parse(url_bust)
-    response = Net::HTTP.get_response(uri)
+  def test_url_response(url, as_mobile = false)
+
+    uri = URI.parse(url)
+
+    http = Net::HTTP.new(uri.host, 80)
+    request = Net::HTTP::Get.new(uri.request_uri)
+
+    request["Cookie"]="cd=M;" if as_mobile # pass mobile cookie to force mobile if required
+
+    response = http.request(request)
+
+    version = as_mobile ? "mobile" : "desktop"
 
     if response.code.to_s != "200"
-      log_to_file("fails", "non-200,#{url_bust} , response code:: #{response.code}")
-      log_to_file("result_for_page_scan", "#{url_bust}, non-200,#{response.code}")
+      log_to_file("fails", "#{version},non-200,#{url} , response code:: #{response.code}")
+      log_to_file("result_for_page_scan", "#{version},#{url}, non-200,#{response.code}")
       return
     end
 
-    last_start = Time.now
     body = response.body
 
     result = [url]
@@ -64,17 +75,19 @@ class CheckUrls < Common
       if res
         puts "got hit for #{res[0]} in page #{url}"
 
-        log_to_file("fails", "banned-term,#{url} , #{res[0]}")
+        log_to_file("fails", "#{version},banned-term,#{url} , #{res[0]}")
         hits << res[0]
 
 
       end
     end
 
+
+
     if (hits.size > 0)
-      log_to_file("result_for_page_scan", "#{url_bust},banned-term, #{hits.join('|')}")
+      log_to_file("result_for_page_scan", "#{version},#{url},banned-term, #{hits.join('|')}")
     else
-      log_to_file("result_for_page_scan", "#{url_bust},ok")
+      log_to_file("result_for_page_scan", "#{version},#{url},ok")
     end
 
     result = hits.size > 0 ? ["FAIL"] : ["PASS"]

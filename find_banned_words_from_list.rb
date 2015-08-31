@@ -154,7 +154,7 @@ class GetBanned < Common
   end
 
   def find_bad_synonyms
-    synonyms = read_file_to_array("all-synonyms.db", true)
+    synonyms = read_file_to_array("data/all_synonyms.db", true)
 
     puts synonyms.size
 
@@ -178,7 +178,7 @@ class GetBanned < Common
 
   def find_bad_locations
 
-    locations = read_file_to_array("all_locations.db", true)
+    locations = read_file_to_array("data/all_locations.db", true)
 
     puts locations.size
 

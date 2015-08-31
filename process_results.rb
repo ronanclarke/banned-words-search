@@ -18,9 +18,6 @@ class ProcessResults
 
     file_name = "logs/results_completed_0.log"
 
-    #res = read_file_to_array(file_name)
-    # @log_dir = File.join(File.dirname(__FILE__), "logs-full-rescan-mon-22nd-Jun")
-    #@log_dir = File.join(File.dirname(__FILE__), "2nd-set-of-words/full-rescan-6th-Jul-2015/")
     @log_dir = File.join(File.dirname(__FILE__), "logs")
 
     puts @log_dir
@@ -55,51 +52,7 @@ class ProcessResults
     all= all.uniq
     puts "deduped length  : #{all.size}"
 
-    if (populate_suppliers)
-      # populate extra info from suppliers
-      all_updated = []
-      client = TinyTds::Client.new username: @username, password: @password, host: @host, database: @db
-
-
-      all.each_with_index do |each, i|
-
-        clinic_id = each.split(",")[0].to_i
-        result = client.execute("select s.Id as supplierId,s.SupplierType,s.TermsID  FROM Clinics c JOIN Suppliers s ON c.supplierid = s.id where c.ID = #{clinic_id}")
-        res = result.first
-
-        if (res)
-
-          is_priority = @priority_clinics.include? clinic_id.to_s
-
-          if (res["SupplierType"] && res["SupplierType"] == 2)
-            supplierType = "Paid"
-          else
-            supplierType = "Free"
-          end
-
-          termsAccepted = res["TermsID"] ? "Yes" : "No"
-
-
-          prepend = [is_priority, res["supplierId"], supplierType, termsAccepted].join(",")
-          each = prepend + "," + each
-          puts each
-          all_updated << each
-        else
-          puts "res is nil for #{clinic_id}"
-          break
-        end
-
-        File.open("bad_all_with_extra_info", "w+") do |f|
-          f.puts(all_updated)
-        end
-
-      end
-
-      client.close
-
-    end
-
-    whitelisted_terms = ["hawthorn","artane"]
+    whitelisted_terms = ["hawthorn", "artane"]
     final = []
     all_terms = []
     if (type == "bad")
@@ -109,7 +62,6 @@ class ProcessResults
         # get counts of duplicates
 
 
-
         all_terms << term
         if (!whitelisted_terms.include? term)
           final << each
@@ -117,8 +69,8 @@ class ProcessResults
       end
 
       all_terms = all_terms - whitelisted_terms
-      grouped = all_terms.inject(Hash.new(0)) { |h, e| h[e] += 1 ; h }
-      sorted = grouped.sort_by { |name,count| count * -1}
+      grouped = all_terms.inject(Hash.new(0)) { |h, e| h[e] += 1; h }
+      sorted = grouped.sort_by { |name, count| count * -1 }
       sorted.each do |item|
         puts "#{item[0]} #{item[1]}"
       end
