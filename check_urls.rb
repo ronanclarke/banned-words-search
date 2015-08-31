@@ -30,15 +30,20 @@ class CheckUrls < Common
 
     # urls = [urls[0]]
 
+    params = []
+    params << "ronanadwords=true"
+    params << "ronantest1=true"
+
     urls.each.each do |url|
 
-      puts counter
-      counter = counter + 1
+
+      # add params as required to the url
+      url = url + (url.include?("?") ? "&" : "?") + params.join("&")
 
       test_url_response(url)
       test_url_response(url, true) # send true so we fetch the mobile version using the cookie switch
-
-
+      puts counter
+      counter = counter + 1
     end
     end_time = Time.now
 
@@ -83,7 +88,6 @@ class CheckUrls < Common
     end
 
 
-
     if (hits.size > 0)
       log_to_file("result_for_page_scan", "#{version},#{url},banned-term, #{hits.join('|')}")
     else
@@ -91,6 +95,7 @@ class CheckUrls < Common
     end
 
     result = hits.size > 0 ? ["FAIL"] : ["PASS"]
+    result << version
     result << url
     result << hits.join("|")
 
