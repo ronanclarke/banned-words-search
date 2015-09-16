@@ -1,0 +1,1 @@
+curl -v http://www.whatclinic.com/dentists/singapore/central-singapore/tanglin/teeth-contouring-reshaping -o /dev/null -s -H 'Cookie: cc=SG' -A 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' -H 'Accept-Encoding: gzip' 
