@@ -8,11 +8,10 @@ class ClearCache < Common
     puts "here"
 
 
-    urls = read_file_to_array("data/urls_to_clear.db", true)
-
+      # urls = read_file_to_array("data/urls_to_clear.db", true)
+    urls = ["dentists/singapore/central-singapore/tanglin/teeth-contouring-reshaping"]
     urls = urls[0..1000]
 
-    hit_url_as_google_bot("http://www.whatclinic.com/dentists/singapore/central-singapore/tanglin/teeth-contouring-reshaping")
 
     time_started = Time.now
     interval = Time.now
@@ -20,9 +19,14 @@ class ClearCache < Common
     counter = 0
     urls.each do |url|
       url.strip!
-      url = "http://www.whatclinic.com/#{url}"
 
+      # put the newest version of the url in the dublin cache
       hit_url_as_google_bot(url,true)
+
+      # ban the url from all edge servers
+      ban_url_from_edge_servers(url)
+
+      # this is just timing and output stuff
       counter = counter + 1
       if( counter % 100 == 0)
         time_per_100 = (Time.now - interval).round(2)
@@ -32,17 +36,29 @@ class ClearCache < Common
     end
   end
 
+  def ban_url_from_edge_servers(url)
+    edge_servers = ["virginia","california","sydney","singapore"] # => virginia.en.prod.varnish.whatclinic.com etc
+
+    edge_servers.each do |server|
+      curl_to_ban = "curl -s -S -f -X POST 'http://#{server}.en.prod.varnish.whatclinic.com/varnish/api/v2/ban/by-page/#{url}'"
+      puts curl_to_ban
+      system(curl_to_ban)
+    end
+  end
+
   #
   # hits the url pretending to a google bot
   #
   def hit_url_as_google_bot(url, force_refresh=false)
 
+    url = "http://www.whatclinic.com/#{url}" unless url.include? "whatclinic.com"
     country = url.split(/\/|\?/)[4]
 
     country_code = get_country_mapping[country];
 
     cmd = build_cmd(url, country_code, "D", force_refresh)
     system(cmd)
+
     cmd = build_cmd(url, country_code, "M", force_refresh)
     system(cmd)
     puts "completed #{url}"
